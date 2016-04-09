@@ -26,7 +26,8 @@
                 'search': '/project/search.do'
             },
             account: {
-                'all': '/account/all.action'
+                'all': '/account/all.action',
+                'updateUserPassword': '/account/updateUserPassword.do'
             },
             team: {
                 'create': '/org/team/create.do',

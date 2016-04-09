@@ -44,8 +44,8 @@
             #set($_corpList = $corpList)
             #if($_corpList.size() > 0)
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">团队 <b class="caret"></b></a>
-            #else
-               <a href="#" class="_createTeamBtn"><span class="glyphicon glyphicon-plus"></span>创建团队</a>
+            #elseif($curUser.isAdmin())
+                <a href="#" class="_createTeamBtn"><span class="glyphicon glyphicon-plus"></span>创建团队</a>
             #end
           <ul class="dropdown-menu teams">
             #foreach($corp in $_corpList)
@@ -53,7 +53,10 @@
             #end
               <div style="clear:both;"></div>
               <li style="text-align:center;"><button onclick="window.location.href = '$teamUrl.teams';" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list"></span>全部团队</button></li>
-              <li style="text-align:center;"><button class="btn btn-primary btn-sm _createTeamBtn"><span class="glyphicon glyphicon-plus"></span>创建团队</button></li>
+
+              #if($curUser.isAdmin())
+                  <li style="text-align:center;"><button class="btn btn-primary btn-sm _createTeamBtn"><span class="glyphicon glyphicon-plus"></span>创建团队</button></li>
+              #end
           </ul>
         </li>
         <!-- <li><a href="$projectUrl.myProjectList">我的项目</a></li>
@@ -104,6 +107,9 @@
                     <li><a href="$newUrl.home">我的主页</a></li>
                     <li><a href="$accountUrl.myAccount">个人信息</a></li>
                     <li><a href="$accountUrl.mySetting">个人设置</a></li>
+                    #if($curUser.isAdmin())
+                        <li><a href="$accountUrl.userList">用户管理</a></li>
+                    #end
                     <li class="divider"></li>
                     <li><a href="$accountUrl.doLogout">退出</a></li>
                 </ul>
@@ -136,24 +142,24 @@
           </li>
         </ul>
     </li>
-    <li>
-        <a href="javascript:void(0);" class="dropdown-toggle" id="register-trigger">注册</a>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li>
-              <form name="formMain" class="navbar-form register-form" action="$accountUrl.doRegister" method="post">
-                  <input class="span2 form-control" style="width:200px" type="text" placeholder="中文名" required name="name">
-                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="email" placeholder="邮箱" required name="email">
-                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="text" placeholder="登录用户名" required name="account">
-                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="password" placeholder="密码" required name="password" id="register-password">
-                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="password" placeholder="密码确认" required name="passwordConfirm" id="register-password-confirm">
-                  <div style="margin-top: 10px;">
-                    <button type="submit" class="btn btn-primary" id="register-btn">注册</button>
-                    <button type="button" class="btn btn-default" id="cancel-register-btn" style="margin-left: 10px;">取消</button>
-                  </div>
-              </form>
-          </li>
-    </ul>
-    </li>
+##    <li>
+##        <a href="javascript:void(0);" class="dropdown-toggle" id="register-trigger">注册</a>
+##        <ul class="dropdown-menu dropdown-menu-right">
+##          <li>
+##              <form name="formMain" class="navbar-form register-form" action="$accountUrl.doRegister" method="post">
+##                  <input class="span2 form-control" style="width:200px" type="text" placeholder="中文名" required name="name">
+##                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="email" placeholder="邮箱" required name="email">
+##                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="text" placeholder="登录用户名" required name="account">
+##                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="password" placeholder="密码" required name="password" id="register-password">
+##                  <input class="span2 form-control" style="width:200px;margin-top:10px;" type="password" placeholder="密码确认" required name="passwordConfirm" id="register-password-confirm">
+##                  <div style="margin-top: 10px;">
+##                    <button type="submit" class="btn btn-primary" id="register-btn">注册</button>
+##                    <button type="button" class="btn btn-default" id="cancel-register-btn" style="margin-left: 10px;">取消</button>
+##                  </div>
+##              </form>
+##          </li>
+##    </ul>
+##    </li>
   </ul>
 </div>
       #end

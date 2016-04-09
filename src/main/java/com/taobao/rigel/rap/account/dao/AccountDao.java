@@ -90,6 +90,20 @@ public interface AccountDao {
     List<User> getUserList();
 
     /**
+     * get user list
+     *
+     * @return
+     */
+    List<User> getUserListWithPager(int pageNum, int pageSize, String keyword);
+
+    /**
+     * get user list
+     *
+     * @return
+     */
+    int getUserListWithPagerNum(String keyword);
+
+    /**
      * change password
      *
      * @param account

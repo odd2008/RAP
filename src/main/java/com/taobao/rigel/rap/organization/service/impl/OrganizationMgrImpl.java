@@ -360,6 +360,12 @@ public class OrganizationMgrImpl implements OrganizationMgr {
             return false;
         }
         organizationDao.deleteMembershipFromCorp(curUserId, userId, corpId);
+
+
+
+        String [] cacheKey = new String[]{CacheUtils.KEY_CORP_LIST_TOP_ITEMS, new Integer(userId).toString()};
+        CacheUtils.del(cacheKey);
+
         return true;
     }
 

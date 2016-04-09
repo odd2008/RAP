@@ -5,6 +5,7 @@ import com.taobao.rigel.rap.account.bo.Notification;
 import com.taobao.rigel.rap.account.bo.Role;
 import com.taobao.rigel.rap.account.bo.User;
 import com.taobao.rigel.rap.common.base.ActionBase;
+import com.taobao.rigel.rap.common.config.SystemConstant;
 import com.taobao.rigel.rap.common.service.impl.ContextManager;
 import com.taobao.rigel.rap.common.utils.CacheUtils;
 import com.taobao.rigel.rap.common.utils.Pinyin4jUtil;
@@ -15,6 +16,7 @@ import com.taobao.rigel.rap.organization.service.OrganizationMgr;
 import sun.misc.Cache;
 
 import javax.mail.internet.AddressException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -25,7 +27,6 @@ import java.util.*;
 public class AccountAction extends ActionBase {
 
     private int userId;
-    private int roleId;
     private String account;
     private String password;
     private String newPassword;
@@ -39,6 +40,20 @@ public class AccountAction extends ActionBase {
     private String profileValue;
     private boolean isEditMode = false;
 
+    private int pageNum;
+    private List<User> users;
+
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    private String keyword;
+
     public User getUser() {
         return user;
     }
@@ -49,6 +64,19 @@ public class AccountAction extends ActionBase {
 
     private User user;
 
+    public int getUsersNum(){
+        return this.usersNum;
+    }
+
+    public void setUsersNum(int usersNum) {
+        this.usersNum = usersNum;
+    }
+
+    private int usersNum;
+
+    public List<User> getUsers(){
+        return this.users;
+    }
     public OrganizationMgr getOrganizationMgr() {
         return organizationMgr;
     }
@@ -214,14 +242,6 @@ public class AccountAction extends ActionBase {
         this.userId = userId;
     }
 
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
     public String getAccount() {
         return account;
     }
@@ -331,12 +351,47 @@ public class AccountAction extends ActionBase {
         return SUCCESS;
     }
 
-    public String register() {
-        doLogout();
+    public int getPageNum() {
+        if (pageNum > 0)
+            return pageNum;
+        else
+            return 1;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+
+
+    public int getUsersPageInTotal() {
+        double result = Math.ceil((double) usersNum / (double) SystemConstant.DEFAULT_PAGE_SIZE);
+        return (int) result;
+    }
+
+    public String userList() throws UnsupportedEncodingException {
+        if (!isUserLogined()) {
+            plsLogin();
+            return LOGIN;
+        }
+
+        // 只用一个管理账号来创建团队添加账号等等.
+        users = getAccountMgr().getUserListWithPager(getPageNum(), SystemConstant.DEFAULT_PAGE_SIZE, StringUtils.UnEscapeInU(keyword));
+        usersNum = getAccountMgr().getUserListWithPagerNum(keyword);
+
         return SUCCESS;
     }
 
-    public String doRegister() {
+    public String userAdd() {
+        if (!isUserLogined()) {
+            plsLogin();
+            return LOGIN;
+        }
+
+        return SUCCESS;
+    }
+
+    public String doUserAdd() {
         if (!StringUtils.validateName(getName())) {
             setErrMsg(StringUtils.NAME_FORMAT_WARN_MSG);
             return ERROR;
@@ -363,10 +418,27 @@ public class AccountAction extends ActionBase {
             setErrMsg("该用户名" + user.getAccount() + "已经存在咯~~~");
             return ERROR;
         } else if (super.getAccountMgr().addUser(user)) {
-            return doLogin();
+            setRelativeReturnUrl("/account/userList.do");
+            return "redirect";
         } else {
             return ERROR;
         }
+    }
+
+    public String updateUserPassword() {
+        if (!isUserLogined() || !getCurUser().isAdmin()) {
+            setErrMsg(ACCESS_DENY);
+            return JSON_ERROR;
+        }
+
+        int userId = getId();
+        String newpasswd = getPassword();
+        User targetUser = super.getAccountMgr().getUser(userId);
+        targetUser.setPassword(StringUtils.getDoubleMD5(newpasswd));
+        super.getAccountMgr().updateUser(targetUser);
+
+        setJson("{\"code\": 200}");
+        return SUCCESS;
     }
 
     public String myAccount() {

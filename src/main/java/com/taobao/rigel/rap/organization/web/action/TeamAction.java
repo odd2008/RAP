@@ -8,6 +8,7 @@ import com.taobao.rigel.rap.common.config.SystemConstant;
 import com.taobao.rigel.rap.organization.bo.Corporation;
 import com.taobao.rigel.rap.organization.service.OrganizationMgr;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -123,15 +124,15 @@ public class TeamAction extends ActionBase {
         return SUCCESS;
     }
 
-    public String teams() {
+    public String teams() throws UnsupportedEncodingException {
         if (!isUserLogined()) {
             plsLogin();
             setRelativeReturnUrl("/org/team/teams.do");
             return LOGIN;
         }
         int userId = getCurUserId();
-        teamList = organizationMgr.getCorporationListWithPager(userId, getPageNum(), SystemConstant.DEFAULT_PAGE_SIZE, keyword);
-        teamListNum = organizationMgr.getCorporationListWithPagerNum(userId, keyword);
+        teamList = organizationMgr.getCorporationListWithPager(userId, getPageNum(), SystemConstant.DEFAULT_PAGE_SIZE, StringUtils.UnEscapeInU(keyword));
+        teamListNum = organizationMgr.getCorporationListWithPagerNum(userId, StringUtils.UnEscapeInU(keyword));
         return SUCCESS;
     }
 
@@ -205,11 +206,12 @@ public class TeamAction extends ActionBase {
             logger.error("Unlogined user trying to checkin and failed.");
             return JSON_ERROR;
         }
-        if (organizationMgr.removeMemberFromCorp(getCurUserId(), getUserId(), getId())) {
-            return SUCCESS;
-        } else {
-            return "json-error";
+
+        if (! organizationMgr.removeMemberFromCorp(getCurUserId(), getUserId(), getId())) {
+            return JSON_ERROR;
         }
+
+        return SUCCESS;
     }
 
     public String addMembers() {

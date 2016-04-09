@@ -14,9 +14,12 @@
 <div class="page">
     <div class="groups-con content">
         #breadcrumb
-        <div>
-            <span class="btn btn-primary create-group"><i class="glyphicon glyphicon-plus"></i> 创建分组</span>
-        </div>
+
+        #if($curUser.isAdmin())
+            <div>
+                <span class="btn btn-primary create-group"><i class="glyphicon glyphicon-plus"></i> 创建分组</span>
+            </div>
+        #end
         <div class="groups">
             <div class="loading">加载中，请稍候</div>
         </div>
@@ -28,13 +31,16 @@
 <div class="group">
     <h3>
         <span class="group-name">{{name}}</span>
+
+        #if($curUser.isAdmin())
         <span class="modify-con">
             <input type="text" name="name" class="form-control modify-name" value="" />
-            <span class="btn btn-success save-update-group" data-id="{{id}}">保存</span> <span class="btn btn-default cancel-edit">取消</span> 
+            <span class="btn btn-success save-update-group" data-id="{{id}}">保存</span> <span class="btn btn-default cancel-edit">取消</span>
         </span>
-        <span class="btn btn-hover btn-default update-group" data-id="{{id}}"><i class="glyphicon glyphicon-edit"></i> 修改名称</span> 
+        <span class="btn btn-hover btn-default update-group" data-id="{{id}}"><i class="glyphicon glyphicon-edit"></i> 修改名称</span>
         <span class="btn btn-hover btn-default delete-group" data-id="{{id}}"><i class="glyphicon glyphicon-trash"></i> 删除这个分组</span>
-    </h3>
+        #end
+        </h3>
     <div class="box-con clearfix">
 		{{#projects}}
         <div class="box" data-projid="{{id}}">
@@ -47,16 +53,22 @@
 				<div class="star"><i class="glyphicon glyphicon-star"></i></div>
 			{{/important}}
 			<div class="tools">
+                #if($curUser.isAdmin())
 				{{#isManagable}}<i class="glyphicon glyphicon-pencil" data-id="{{id}}"></i>{{/isManagable}}
+                #end
 				<i class="glyphicon glyphicon-export" data-id="{{id}}" title="复制RAP插件地址"></i>
 				<i class="glyphicon glyphicon-eye-open" data-id="{{id}}"></i>
+                #if($curUser.isAdmin())
 				{{#isManagable}}<i class="glyphicon glyphicon-trash" data-id="{{id}}"></i>{{/isManagable}}
+                #end
 			</div>
 			<input type="hidden" class="accounts-hidden" value="{{accounts}}"/>
         </div>
 		{{/projects}}
+        #if($curUser.isAdmin())
         <div class="box-to-add" data-groupid="{{id}}">
         </div>
+        #end
     </div>
 </div>
 {{/groups}}

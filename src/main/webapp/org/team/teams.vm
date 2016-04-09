@@ -11,7 +11,7 @@
 <div id="container">
     <div class="clear" style="margin:22px 0;">
         <div class="input-group" style="width:300px;float:right">
-            <input type="text" id="inputSearch" class="form-control" value="$!utils.escapeInHJ($keyword)" placeholder="按团队名称检索">
+            <input type="text" id="inputSearch" class="form-control" value="$!utils.UnEscapeInU($keyword)" placeholder="按团队名称检索">
              <span class="input-group-btn">
                 <button class="btn btn-default" id="btnSearch" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
               </span>
@@ -89,7 +89,7 @@
 
     function search() {
         var keyword = $.trim($('#inputSearch').val());
-        window.location.href = '$teamUrl.teams?keyword=' + encodeURIComponent(keyword);
+        window.location.href = '$teamUrl.teams?keyword=' + encodeURIComponent(encodeURIComponent(keyword));
     }
 </script>
 #bodyEnd

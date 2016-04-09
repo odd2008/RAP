@@ -28,14 +28,23 @@
                 class="com.taobao.rigel.rap.account.web.action.AccountAction" method="doLogout">
             <result name="success" type="velocity">/platform/home.vm</result>
         </action>
-        <action name="register" class="com.taobao.rigel.rap.account.web.action.AccountAction"
-                method="register">
-            <result name="success" type="velocity">/account/register.vm</result>
+        <action name="userList" class="com.taobao.rigel.rap.account.web.action.AccountAction"
+                method="userList">
+            <result name="success" type="velocity">/account/userList.vm</result>
         </action>
-        <action name="doRegister"
-                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="doRegister">
-            <result name="success" type="velocity">/platform/home.vm</result>
-            <result name="error" type="velocity">/account/register.vm</result>
+        <action name="userAdd"
+                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="userAdd">
+            <result name="success" type="velocity">/account/userAdd.vm</result>
+        </action>
+        <action name="doUserAdd"
+                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="doUserAdd">
+            <result name="success" type="velocity">/account/userList.vm</result>
+            <result name="error" type="velocity">/account/userList.vm</result>
+        </action>
+
+        <action name="updateUserPassword"
+                class="com.taobao.rigel.rap.account.web.action.AccountAction" method="updateUserPassword">
+            <result name="success" type="velocity">/bcom/json.cb.vm</result>
         </action>
         <action name="myAccount"
                 class="com.taobao.rigel.rap.account.web.action.AccountAction" method="myAccount">

@@ -43,6 +43,20 @@ public interface AccountMgr {
     List<User> getUserList();
 
     /**
+     * get all users
+     *
+     * @return user list of paper
+     */
+    List<User> getUserListWithPager(int pageNum, int pageSize, String keyword);
+
+    /**
+     * get user number
+     *
+     * @return user number list of paper
+     */
+    int getUserListWithPagerNum(String keyword);
+
+    /**
      * get users of team
      *
      * @param teamId

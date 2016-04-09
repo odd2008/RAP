@@ -131,6 +131,16 @@ public class AccountMgrImpl implements AccountMgr {
     }
 
 
+    public List<User> getUserListWithPager(int pageNum, int pageSize, String keyword) {
+        return accountDao.getUserListWithPager(pageNum, pageSize, keyword);
+    }
+
+
+    public int getUserListWithPagerNum(String keyword) {
+        return accountDao.getUserListWithPagerNum(keyword);
+    }
+
+
     public List<User> getUserList(int teamId) {
 
         List<Integer> userIdList = accountDao.getUserIdList(teamId);

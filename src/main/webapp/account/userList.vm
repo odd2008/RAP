@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+    #parse('/tcom/template.rap.vm')
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>用户管理 </title>
+    #includeNewRapStatic
+    <style type="text/css">
+
+        .shake {
+            -webkit-animation-name: spaceboots;
+            -webkit-animation-duration: 0.8s;
+            -webkit-transform-origin: 50% 50%;
+            -webkit-animation-iteration-count: 2;
+            -webkit-animation-timing-function: linear;
+            display: inline-block
+        }
+    </style>
+</head>
+<body>
+#bodyNewStart
+<div id="container">
+    <div class="clear" style="margin:22px 0;">
+        <a href="$accountUrl.userAdd" class="btn btn-success create-btn" style="float:right;"><i class="glyphicon glyphicon-plus"></i> 新增用户</a>
+        <div class="input-group" style="width:300px;float:right;margin-right:10px;">
+            <input type="text" id="inputSearch" class="form-control" value="$!utils.UnEscapeInU($keyword)" placeholder="按照账号检索">
+             <span class="input-group-btn">
+                <button class="btn btn-default" id="btnSearch" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+              </span>
+        </div>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <th style="width:20%;">账号</th>
+        <th style="width:20%;">姓名</th>
+        <th style="width:30%;">Email</th>
+        <th style="width:30%;text-indent:2em;">操作</th>
+        </thead>
+        <tbody>
+            #foreach($item in $users)
+            <tr>
+                <td>$!utils.escapeInH($item.account)</td>
+                <td>$!utils.escapeInH($item.name)</td>
+                <td>$!utils.escapeInH($item.email)</td>
+                <td>
+                    <span class="btn btn-sm btn-primary update-btn" data-id="$item.id">
+                        <i class="glyphicon glyphicon-edit"></i> 修改密码
+                    </span>
+                </td>
+            </tr>
+            #end
+        </tbody>
+    </table>
+    <nav>
+        <ul class="pagination pagination-sm">
+            <li  #if($pageNum==1)
+                    class="disabled" onclick="return false;"
+            #end><a href="$accountUrl.userList?pageNum=1" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+            #foreach($curPageNum in [1..$usersPageInTotal])
+                #if($pageNum==$curPageNum)
+                    <li class="active"><a href="#">$curPageNum <span class="sr-only">(current)</span></a></li>
+                #else
+                    <li><a href="$accountUrl.userList?pageNum=$!curPageNum">$curPageNum</a></li>
+                #end
+
+            #end
+            <li #if($pageNum==$usersPageInTotal)
+                    class="disabled" onclick="return false;"
+            #end><a href="$accountUrl.userList?pageNum=$!usersPageInTotal" aria-label="Next"><span aria-hidden="true">»</span></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script type="text/tmpl" id="change_password">
+<div class="form-horizontal" role="form">
+  <div class="form-group">
+    <label for="password-inputer" class="col-sm-2 control-label">输入密码: <span style="color:red">&#42;</span></label>
+    <div class="col-sm-10">
+      <input type="password" id="password-inputer" class="form-control" style="width:432px;" placeholder="请输入新密码" value="{{value}}"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="confirmPassword-inputer" class="col-sm-2 control-label">确认密码: <span style="color:red">&#42;</span></label>
+    <div class="col-sm-10">
+      <input type="password" id="confirmPassword-inputer" class="form-control" style="width:432px;" placeholder="请重新输入新密码" value="{{value}}"/>
+    </div>
+  </div>
+</div>
+
+</script>
+
+<script>
+    $('.glyphicon').tooltip();
+    setTimeout(function() {
+        $('#inputSearch').focus();
+    }, 500);
+
+    $("#btnSearch").click(function() {
+        search();
+    })
+
+    $('#inputSearch').keypress(function(e) {
+        if (e.keyCode === 13) {
+            search();
+        }
+    });
+
+    function search() {
+        var keyword = $.trim($('#inputSearch').val());
+        window.location.href = '$accountUrl.userList?keyword=' + encodeURIComponent(encodeURIComponent(keyword));
+    }
+
+    $(document).ready(function(){
+
+        $(".update-btn").click(function(){
+            var targetId = $(this).data("id");
+            $.confirm({
+                content: $.render($('#change_password').text(), {}),
+                title: '修改密码',
+                confirmText: '确定',
+                showCallback: function () {
+                    $(this).find('#password-inputer').focus();
+                },
+                confirmClicked: function () {
+                    var password_inputer = $(this).find('#password-inputer');
+                    var confirmPassword_inputer = $(this).find('#confirmPassword-inputer');
+                    if (password_inputer.val().trim() == '') {
+                        password_inputer.addClass('shake');
+                        password_inputer.focus();
+                        setTimeout(function () {
+                            password_inputer && password_inputer.removeClass('shake');
+                        }, 1000);
+                        return;
+                    }
+
+                    if (confirmPassword_inputer.val().trim() == '') {
+                        confirmPassword_inputer.addClass('shake');
+                        confirmPassword_inputer.focus();
+                        setTimeout(function () {
+                            confirmPassword_inputer && confirmPassword_inputer.removeClass('shake');
+                        }, 1000);
+                        return;
+                    }
+
+
+                    if (password_inputer.val().trim() != confirmPassword_inputer.val().trim()) {
+                        confirmPassword_inputer.addClass('shake');
+                        password_inputer.addClass('shake');
+                        password_inputer.focus();
+                        setTimeout(function () {
+                            password_inputer && password_inputer.removeClass('shake');
+                            confirmPassword_inputer && confirmPassword_inputer.removeClass('shake');
+                        }, 1000);
+                        return;
+                    }
+
+                    $.post($.route('org.account.updateUserPassword'), {
+                        id: targetId,
+                        password: password_inputer.val().trim()
+                    }, function (data) {
+                        if (data.code != '200') {
+                            modal.modal('hide');
+                            alert(data.msg);
+                            return;
+                        }
+
+                        window.location.href = '$accountUrl.userList';
+                    }, "JSON")
+
+                }
+            });
+        });
+
+    });
+
+
+</script>
+
+#bodyEnd
+
+</script>
+</body>
+</html>

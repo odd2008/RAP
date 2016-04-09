@@ -141,6 +141,48 @@ public class AccountDaoImpl extends HibernateDaoSupport implements AccountDao {
         return currentSession().createQuery("from User").list();
     }
 
+
+    public List<User> getUserListWithPager(int pageNum, int pageSize, String keyword) {
+        boolean isSearch = keyword != null && !keyword.trim().isEmpty();
+        StringBuilder sql = new StringBuilder();
+        sql
+                .append("select DISTINCT id from tb_user ")
+                .append("where id <> 1" + (isSearch ? " and account LIKE CONCAT('%', :keyword, '%') " : " "))
+                .append("LIMIT :startIndex, :pageSize ");
+
+        Query query = currentSession().createSQLQuery(sql.toString());
+        query.setInteger("startIndex", (pageNum - 1) * pageSize);
+        query.setInteger("pageSize", pageSize);
+        if (isSearch) {
+            query.setString("keyword", keyword);
+        }
+
+        List<Integer> list = query.list();
+        List<User> resultList = new ArrayList<User>();
+        for (int id : list) {
+            User row = getUser(id);
+            resultList.add(row);
+        }
+        return resultList;
+    }
+
+
+    public int getUserListWithPagerNum(String keyword) {
+        boolean isSearch = keyword != null && !keyword.trim().isEmpty();
+        StringBuilder sql = new StringBuilder();
+        sql
+                .append("select COUNT(DISTINCT id) from tb_user ")
+                .append("WHERE id <> 1" + (isSearch ? " and account LIKE CONCAT('%', :keyword, '%') " : " "));
+
+        Query query = currentSession().createSQLQuery(sql.toString());
+        if (isSearch) {
+            query.setString("keyword", keyword);
+        }
+        String result = query.uniqueResult().toString();
+        return Integer.parseInt(result);
+
+    }
+
     public void _changePassword(String account, String password) {
         Session session = currentSession();
         User user = (User) session.load(User.class, getUserId(account));
