@@ -27,6 +27,7 @@ import java.util.*;
 public class AccountAction extends ActionBase {
 
     private int userId;
+    private int roleId;
     private String account;
     private String password;
     private String newPassword;
