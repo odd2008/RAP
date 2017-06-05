@@ -39,7 +39,7 @@
         <action name="doUserAdd"
                 class="com.taobao.rigel.rap.account.web.action.AccountAction" method="doUserAdd">
             <result name="success" type="velocity">/account/userList.vm</result>
-            <result name="error" type="velocity">/account/userList.vm</result>
+            <result name="error" type="velocity">/account/userAdd.vm</result>
         </action>
 
         <action name="updateUserPassword"
