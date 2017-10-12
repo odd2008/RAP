@@ -15,8 +15,11 @@ class JedisFactory {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         String host = SystemConstant.getConfig("redis.host");
         int port = Integer.parseInt(SystemConstant.getConfig("redis.port"));
+        int timeout = Integer.parseInt(SystemConstant.getConfig("redis.timeout"));
         String password = SystemConstant.getConfig("redis.passwd");
-        jedisPool = new JedisPool(poolConfig, host, port, 0, password);
+        if (password.equals("")) password = null;
+        int database = Integer.parseInt(SystemConstant.getConfig("redis.database"));
+        jedisPool = new JedisPool(poolConfig, host, port, timeout, password, database);
     }
 
     public JedisPool getJedisPool() {
