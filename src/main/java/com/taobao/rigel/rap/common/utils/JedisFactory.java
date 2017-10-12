@@ -15,7 +15,8 @@ class JedisFactory {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         String host = SystemConstant.getConfig("redis.host");
         int port = Integer.parseInt(SystemConstant.getConfig("redis.port"));
-        jedisPool = new JedisPool(poolConfig, host, port);
+        String password = SystemConstant.getConfig("redis.passwd");
+        jedisPool = new JedisPool(poolConfig, host, port, 0, password);
     }
 
     public JedisPool getJedisPool() {

@@ -61,7 +61,7 @@ public class AuthCheckFilter implements Filter {
         boolean logined = userAccount != null;
 
         SystemConstant.README_PATH = session.getServletContext().getRealPath(File.separator + "README.md");
-        SystemConstant.ROOT = session.getServletContext().getRealPath(File.separator);
+        SystemConstant.ROOT = session.getServletContext().getRealPath(File.separator)+"//";
 
         if (!logined) {
             SimpleSSOUser user = SimpleUserUtil
